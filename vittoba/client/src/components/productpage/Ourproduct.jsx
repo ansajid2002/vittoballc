@@ -5,6 +5,8 @@ import { RiCloseLine } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import notfoundImg from "../../images/image_not_available.png"
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const Ourproduct = () => {
     const navigate = useNavigate();
@@ -19,12 +21,12 @@ const Ourproduct = () => {
     const [brand, setBrand] = useState(null)
     const [showsection, setShowsection] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(9);
+    const itemsPerPage = 10;
 
     const getPaginatedItems = () => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        return filterdata.slice(startIndex, endIndex);
+        return filterdata?.slice(startIndex, endIndex);
     };
 
 
@@ -156,23 +158,30 @@ const Ourproduct = () => {
         navigate(`/ProductDetail?${item.product_name}`, { state: item });
         return window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    const nextPage = () => {
-        setCurrentPage((prevPage) => prevPage + 1);
-    };
-
-    const prevPage = () => {
-        setCurrentPage((prevPage) => prevPage - 1);
-    };
-
     const totalPages = Math.ceil(filterdata?.length / itemsPerPage);
 
+    const nextPage = () => {
+      if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+      }
+    };
+  
+    const prevPage = () => {
+      if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
+  
     const generatePageNumbers = () => {
-        const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(i);
-        }
-        return pageNumbers;
+      if (totalPages <= 4) {
+        return Array.from({ length: totalPages }, (_, i) => i + 1);
+      } else if (currentPage <= 2) {
+        return [1, 2, 3, 4, '...'];
+      } else if (currentPage >= totalPages - 1) {
+        return ['...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      } else {
+        return ['...', currentPage - 1, currentPage, currentPage + 1, '...'];
+      }
     };
 
     return (
@@ -184,7 +193,7 @@ const Ourproduct = () => {
                         <div className={`transition-transform  duration-700 ease-out ${showoptions ? '' : ' translate-x-[55rem] '}`} >
                             <div className='flex items-center' >
                                 <h1 className='mr-4 md:mr-8 group py-6 text-[10px] sm:text-[12px] md:text-[13px] lg:text-lg cursor-pointer  text-gray-600 hover:text-black' onClick={() => searchall()}>All Products</h1>
-                                <h1 className='mr-4 md:mr-8 group py-6 text-[10px] sm:text-[12px] md:text-[13px]  lg:text-lg text-gray-600 hover:text-black '>
+                                <h1 className='mr-4 cursor-pointer md:mr-8 group py-6 text-[10px] sm:text-[12px] md:text-[13px]  lg:text-lg text-gray-600 hover:text-black '>
                                     Brands
                                     {
                                         showbrands ?
@@ -209,7 +218,7 @@ const Ourproduct = () => {
                                     }
 
                                 </h1>
-                                <h1 className='mr-4  md:mr-8 group py-4 text-[10px] sm:text-[12px] md:text-[13px]  lg:text-lg text-gray-600 hover:text-black'>
+                                <h1 className='mr-4 cursor-pointer  md:mr-8 group py-4 text-[10px] sm:text-[12px] md:text-[13px]  lg:text-lg text-gray-600 hover:text-black'>
                                     Toners & Ink
                                     <div className=' max-w-[1536px] hidden group-hover:block absolute w-[100vw] -top-[17.6rem] sm:-top-[15.1rem] md:top-[6.5rem] lg:top-[10.5rem] left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white border border-gray-300 rounded-lg p-4'>
                                         <div className='flex md:flex-row flex-col pl-4  md:pl-0 mx-auto sm:justify-around  md:flex-wrap'>
@@ -281,7 +290,7 @@ const Ourproduct = () => {
                                     </div>
                                 </h1>
 
-                                <h1 className='   group py-6 text-[10px] sm:text-[12px] md:text-[13px]  lg:text-lg text-gray-600 hover:text-black'>
+                                <h1 className='  cursor-pointer  group py-6 text-[10px] sm:text-[12px] md:text-[13px]  lg:text-lg text-gray-600 hover:text-black'>
                                     Ribbons & Tapes
                                     <div className=' max-w-[1536px] hidden group-hover:block absolute w-[100vw]    -top-8 sm:top-2 md:top-[14.2rem] lg:top-[18.3rem] left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white border border-gray-300 rounded-lg p-4'>
                                         <div className='md:flex  justify-around pl-4 md:pl-0'>
@@ -370,11 +379,12 @@ const Ourproduct = () => {
                     </div>
 
                 </div>
+                {
+                    !Loading ? 
+                
                 <div className='m-0 md:m-4 p-0 md:p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
-                    {Loading ? (
-                        'loading'
-                    ) : (
-                        getPaginatedItems().length > 0 ? (
+                    { 
+                        getPaginatedItems()?.length > 0 ? (
                             getPaginatedItems().map((item, i) => {
                                 console.log(item.images0)
                                 return (
@@ -392,7 +402,7 @@ const Ourproduct = () => {
                                                 />
                                             </div>
                                             <h1 className="text-[1.25rem] font-bold text-center my-3 line-clamp-1 ">{item.product_name}</h1>
-                                            <p className="text-lg  line-clamp-3 text-center mb-2">{item.description}</p>
+                                            <p className="text-base tracking-wide  line-clamp-2 text-center mb-2">{item.description}</p>
                                         </div>
                                     </div>
                                 );
@@ -400,47 +410,67 @@ const Ourproduct = () => {
                         ) : (
                             <p className='font-bold text-3xl text-gray-500'>NO PRODUCT FOUND.</p>
                         )
-                    )}
+                    }
                 </div>
-               
+               :
+
+               <div className='m-0 md:m-4 p-0 md:p-4  gap-y-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4'>
+               {
+                   [1,2,3,4,5,6,7,8].map((s) => {
+                       return (
+                       < div className='border-red-900 mx-auto'>
+                           <Skeleton width={320} height={320}/>
+                            <Skeleton width={320} height={30} className='mt-4 rounded-md' />
+                       </div>    
+                       )
+                   })
+               }
+           </div>
+}
+
+
 
                 <div className="md:container md:mx-auto">
-                    {/* ...other JSX code */}
-                    {filterdata?.length > itemsPerPage && (
-                        <div className="flex justify-center mt-4">
-                            <button
-                                disabled={currentPage === 1}
-                                onClick={prevPage}
-                                className="mr-2 px-3 py-1 border rounded-md hover:bg-slate-900 hover:text-white duration-300"
-                            >
-                                Previous
-                            </button>
-                            {generatePageNumbers().map((pageNumber) => (
-                                <button
-                                    key={pageNumber}
-                                    onClick={() => {
-                                        setCurrentPage(pageNumber)
-                                        window.scrollTo({
-                                            top: 0,
-                                            behavior: "smooth"
-                                        });
-                                    }}
-                                    className={` hover:bg-gray-400 duration-300 mx-1 px-3 py-1 border rounded-md ${pageNumber === currentPage ? "bg-gray-400" : ""
-                                        }`}
-                                >
-                                    {pageNumber}
-                                </button>
-                            ))}
-                            <button
-                                disabled={currentPage === totalPages}
-                                onClick={nextPage}
-                                className="ml-2 px-3 py-1 border rounded-md  hover:bg-slate-900 hover:text-white duration-300"
-                            >
-                                Next
-                            </button>
-                        </div>
-                    )}
-                </div>
+      {/* ...other JSX code */}
+      {filterdata?.length > itemsPerPage && (
+        <div className="flex justify-center mt-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={prevPage}
+            className="mr-2 px-2 text-sm md:text-base md:px-3 py-1 border rounded-md bg-white hover:bg-slate-900 hover:text-white duration-300"
+          >
+            Previous
+          </button>
+          {generatePageNumbers().map((pageNumber, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                if (typeof pageNumber === 'number') {
+                  setCurrentPage(pageNumber);
+                  window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth',
+                  });
+                }
+              }}
+              className={`hover:bg-gray-400 duration-300 mx-1 px-2 py-1 border rounded-md ${
+                pageNumber === currentPage ? 'bg-gray-400' : ''
+              }`}
+              disabled={pageNumber === '...'}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button
+            disabled={currentPage === totalPages}
+            onClick={nextPage}
+            className="text-sm md:text-base ml-2 px-2 md:px-3 py-1 border rounded-md bg-white hover:bg-slate-900 hover:text-white duration-300"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
 
 
             </div>

@@ -13,6 +13,8 @@ import about2 from "../../images/about-bottom.jpg"
 import backimg from "../../images/backimghome.png"
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import notfoundImg from "../../images/image_not_available.png"
 // import notfoundImg from "../../images/"
 
@@ -254,7 +256,7 @@ const UserMain = () => {
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: blogData.length < 3 ? 2 : 3,
+    slidesToShow: blogData?.length < 3 ? 2 : 3,
     autoplay: true,
     pauseOnHover: true,
     speed: 500,
@@ -594,7 +596,7 @@ const UserMain = () => {
                   return (
                     <div key={slogo.id} className="" >
                       <div style={{}}>
-                        <div className="  w-[85px] sm:w-[120px]  md:w-[100px] my-auto flex h-[50px] md:h-[60px] " >
+                        <div className="  w-[85px] sm:w-[120px]  md:w-[100px] lg:w-[120px]  my-auto flex h-[50px] md:h-[60px] " >
                           <img className="object-contain" src={slogo.img} alt="brands" />
                         </div>
                       </div>
@@ -610,7 +612,7 @@ const UserMain = () => {
                 logoimg2.map((slogo) => {
                   return (
                     <div key={slogo.id} className="">
-                      <div className=" w-[80px] sm:w-[120px] md:w-[100px] my-auto flex h-[50px] md:h-[60px]   " >
+                      <div className=" w-[85px] sm:w-[120px]  md:w-[100px] lg:w-[120px]  my-auto flex h-[50px] md:h-[60px]   " >
                         <img className="object-contain" src={slogo.img} alt="brands" />
                       </div>
 
@@ -630,12 +632,14 @@ const UserMain = () => {
       {/* ******************************OUR PRODUCTS******************************** */}
       <div className=" bg-slate-200 pt-6 my-10 md:my-12 md:mb-0">
         <h1 className="text-xl   sm:text-2xl md:text-4xl text-center pt-2 font-bold text-slate-900">FEATURED PRODUCTS</h1>
+
+        {
+          !Loading ? 
+
         <div className="m-0 md:m-4 md:mb-0 p-0 md:p-4 md:pb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">
 
-          {Loading ? (
-            'loading'
-          ) : (
-            data.slice(0, 6).map((item, i) => {
+          {
+            data?.slice(0, 6).map((item, i) => {
               if (item.makeitfeatured == '1') {
                 return <>
                   <div key={i} onClick={() => handleProduct(item)} className="cursor-pointer ">
@@ -659,21 +663,28 @@ const UserMain = () => {
                 </>
               }
             })
-          )
+          
           }
 
 
 
-        </div>
+        </div> : 
+        <div className='m-0 md:m-4 p-0 md:p-4  gap-y-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 my-20'>
+        {
+            [1,2,3,4,5,6,7,8].map((s) => {
+                return (
+                < div className='border-red-900 mx-auto'>
+                    <Skeleton width={320} height={320}/>
+                     <Skeleton width={320} height={30} className='mt-4 rounded-md' />
+                </div>    
+                )
+            })
+        }
+    </div>
+        }
       </div>
       {/* ******************************7 DAYS WORKING **************************************** */}
-      {/* <div className="flex items-center justify-between h-[180px] sm:h-[240px] md:h-[300px] xl:h-[350px] px-4 md:px-14 bg-cover bg-no-repeat" style={{ backgroundImage: `url(${backimg})` }} >
-        <div className=" border py-2 md:py-4  px-4 text-sm sm:text-md md:text-xl rounded-lg font-bold text-white bg-slate-900 ">
-          <p className="mb-2"> +971 43280499 </p>
-          <p>sales@vittoballc.com</p>
-        </div>
-        <button className="border py-3  px-5 text-sm sm:text-md md:text-xl bg-slate-900 text-white rounded-lg hover:bg-gray-500">CONTACT US</button>
-      </div> */}
+     
 
       <div className="flex flex-col lg:flex-row items-center  ">
         <div className="sm:w-full  lg:w-1/2 bg-slate-900 text-white flex items-center justify-center h-[250px] md:h-[400px]">
@@ -698,7 +709,9 @@ const UserMain = () => {
         <div className="m-4 sm:m-10 p-2 sm:p-4 mt-2  ">
           <Slider {...settings} >
             {
-              blogData.map((singleproduct, index) => {
+              blogData ? 
+
+              blogData?.map((singleproduct, index) => {
                 const { title, content, image } = singleproduct
                 return (
                   <div key={index} >
@@ -713,8 +726,17 @@ const UserMain = () => {
                     </div>
                   </div>
                 )
+              }) : 
+              [1,2,3,4,5,6].map((s,index) => {
+                return (
+                  < div className='ml-10'>
+                  <Skeleton width={320} height={320}/>
+                   <Skeleton width={320} height={30} className='mt-4 rounded-md' />
+              </div> 
+                )
               })
             }
+            
           </Slider>
 
 
